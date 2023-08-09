@@ -9,26 +9,26 @@ afterEach(() => expect(mswMock).not.toHaveBeenCalled());
 
 const untouchable = require("untouchableMock");
 
-describe("NativeOsmosisWalletInfo", () => {
+describe("NativeMerlinsWalletInfo", () => {
   const info = native.info();
 
   it("should return some static metadata", async () => {
-    expect(await untouchable.call(info, "osmosisSupportsNetwork")).toBe(true);
-    expect(await untouchable.call(info, "osmosisSupportsSecureTransfer")).toBe(false);
-    expect(untouchable.call(info, "osmosisSupportsNativeShapeShift")).toBe(false);
+    expect(await untouchable.call(info, "merlinsSupportsNetwork")).toBe(true);
+    expect(await untouchable.call(info, "merlinsSupportsSecureTransfer")).toBe(false);
+    expect(untouchable.call(info, "merlinsSupportsNativeShapeShift")).toBe(false);
   });
 
   it("should return the correct account paths", async () => {
-    const paths = info.osmosisGetAccountPaths({ accountIdx: 0 });
+    const paths = info.merlinsGetAccountPaths({ accountIdx: 0 });
     expect(paths).toMatchObject([{ addressNList: core.bip32ToAddressNList("m/44'/118'/0'/0/0") }]);
   });
 
   it("does not support getting the next account path", async () => {
-    expect(untouchable.call(info, "osmosisNextAccountPath", {})).toBe(undefined);
+    expect(untouchable.call(info, "merlinsNextAccountPath", {})).toBe(undefined);
   });
 });
 
-describe("NativeOsmosisWallet", () => {
+describe("NativeMerlinsWallet", () => {
   let wallet: native.NativeHDWallet;
 
   beforeEach(async () => {
@@ -37,20 +37,20 @@ describe("NativeOsmosisWallet", () => {
     expect(await wallet.initialize()).toBe(true);
   });
 
-  it("should generate a correct osmosis address", async () => {
-    expect(await wallet.osmosisGetAddress({ addressNList: core.bip32ToAddressNList("m/44'/118'/0'/0/0") })).toBe(
+  it("should generate a correct merlins address", async () => {
+    expect(await wallet.merlinsGetAddress({ addressNList: core.bip32ToAddressNList("m/44'/118'/0'/0/0") })).toBe(
       "osmo1knuunh0lmwyrkjmrj7sky49uxk3peyzh2tlskm"
     );
   });
 
-  it("should generate another correct osmosis address", async () => {
-    expect(await wallet.osmosisGetAddress({ addressNList: core.bip32ToAddressNList("m/44'/118'/1337'/123/4") })).toBe(
+  it("should generate another correct merlins address", async () => {
+    expect(await wallet.merlinsGetAddress({ addressNList: core.bip32ToAddressNList("m/44'/118'/1337'/123/4") })).toBe(
       "osmo14k4dnrrmxdch6nkvvuugsywrgmvlwrqs2f6kye"
     );
   });
 
   it("should sign a transaction correctly", async () => {
-    const signed = await wallet.osmosisSignTx({
+    const signed = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList("m/44'/118'/0'/0/0"),
       tx: {
         msg: [
@@ -80,7 +80,7 @@ describe("NativeOsmosisWallet", () => {
         signatures: [],
         memo: "foobar",
       },
-      chain_id: "osmosishub-4",
+      chain_id: "merlinshub-4",
       account_number: "95421",
       sequence: "35",
     });

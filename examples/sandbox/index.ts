@@ -48,16 +48,16 @@ import * as dogeTxJson from "./json/dogeTx.json";
 import { eip712 } from "./json/ethTx.json";
 import * as ltcTxJson from "./json/ltcTx.json";
 import {
-  osmosisDelegateTx,
-  osmosisIBCTransferTx,
-  osmosisLPAddTx,
-  osmosisLPRemoveTx,
-  osmosisRedelegateTx,
-  osmosisRewardsTx,
-  osmosisSendTx,
-  osmosisSwapTx,
-  osmosisUndelegateTx,
-} from "./json/osmosis/osmosisAminoTx.json";
+  merlinsDelegateTx,
+  merlinsIBCTransferTx,
+  merlinsLPAddTx,
+  merlinsLPRemoveTx,
+  merlinsRedelegateTx,
+  merlinsRewardsTx,
+  merlinsSendTx,
+  merlinsSwapTx,
+  merlinsUndelegateTx,
+} from "./json/merlins/merlinsAminoTx.json";
 import * as rippleTxJson from "./json/rippleTx.json";
 import {
   thorchainBinanceBaseTx,
@@ -1749,248 +1749,248 @@ $thorchainArkeoAddClaim.on("click", async (e) => {
 });
 
 /*
- * Osmosis
+ * Merlins
  */
-const $osmosisAddress = $("#osmosisAddress");
-const $osmosisSend = $("#osmosisSend");
-const $osmosisDelegate = $("#osmosisDelegate");
-const $osmosisUndelegate = $("#osmosisUndelegate");
-const $osmosisRedelegate = $("#osmosisRedelegate");
-const $osmosisRewards = $("#osmosisRewards");
-const $osmosisLPAdd = $("#osmosisLPAdd");
-const $osmosisLPRemove = $("#osmosisLPRemove");
-const $osmosisIBCTransfer = $("#osmosisIBCTransfer");
-const $osmosisSwap = $("#osmosisSwap");
+const $merlinsAddress = $("#merlinsAddress");
+const $merlinsSend = $("#merlinsSend");
+const $merlinsDelegate = $("#merlinsDelegate");
+const $merlinsUndelegate = $("#merlinsUndelegate");
+const $merlinsRedelegate = $("#merlinsRedelegate");
+const $merlinsRewards = $("#merlinsRewards");
+const $merlinsLPAdd = $("#merlinsLPAdd");
+const $merlinsLPRemove = $("#merlinsLPRemove");
+const $merlinsIBCTransfer = $("#merlinsIBCTransfer");
+const $merlinsSwap = $("#merlinsSwap");
 
-const $osmosisResults = $("#osmosisResults");
+const $merlinsResults = $("#merlinsResults");
 
-$osmosisAddress.on("click", async (e) => {
+$merlinsAddress.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const { addressNList } = wallet.osmosisGetAccountPaths({ accountIdx: 0 })[0];
-    const result = await wallet.osmosisGetAddress({
+  if (core.supportsMerlins(wallet)) {
+    const { addressNList } = wallet.merlinsGetAccountPaths({ accountIdx: 0 })[0];
+    const result = await wallet.merlinsGetAddress({
       addressNList,
       showDisplay: false,
     });
-    await wallet.osmosisGetAddress({
+    await wallet.merlinsGetAddress({
       addressNList,
       showDisplay: true,
     });
-    $osmosisResults.val(result);
+    $merlinsResults.val(result);
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisSend.on("click", async (e) => {
+$merlinsSend.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisSendTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsSendTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisDelegate.on("click", async (e) => {
+$merlinsDelegate.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisDelegateTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsDelegateTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisUndelegate.on("click", async (e) => {
+$merlinsUndelegate.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisUndelegateTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsUndelegateTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisRedelegate.on("click", async (e) => {
+$merlinsRedelegate.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisRedelegateTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsRedelegateTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisRewards.on("click", async (e) => {
+$merlinsRewards.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisRewardsTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsRewardsTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisLPAdd.on("click", async (e) => {
+$merlinsLPAdd.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisLPAddTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsLPAddTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisLPRemove.on("click", async (e) => {
+$merlinsLPRemove.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisLPRemoveTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsLPRemoveTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisIBCTransfer.on("click", async (e) => {
+$merlinsIBCTransfer.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisIBCTransferTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsIBCTransferTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisSwap.on("click", async (e) => {
+$merlinsSwap.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisSwapTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsSwapTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
@@ -2240,118 +2240,118 @@ $arkeoAddClaim.on("click", async (e) => {
   }
 });
 
-$osmosisRewards.on("click", async (e) => {
+$merlinsRewards.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisRewardsTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsRewardsTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisLPAdd.on("click", async (e) => {
+$merlinsLPAdd.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisLPAddTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsLPAddTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisLPRemove.on("click", async (e) => {
+$merlinsLPRemove.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisLPRemoveTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsLPRemoveTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisIBCTransfer.on("click", async (e) => {
+$merlinsIBCTransfer.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisIBCTransferTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsIBCTransferTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
-$osmosisSwap.on("click", async (e) => {
+$merlinsSwap.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
-    $osmosisResults.val("No wallet?");
+    $merlinsResults.val("No wallet?");
     return;
   }
-  if (core.supportsOsmosis(wallet)) {
-    const unsigned: core.Osmosis.StdTx = osmosisSwapTx;
+  if (core.supportsMerlins(wallet)) {
+    const unsigned: core.Merlins.StdTx = merlinsSwapTx;
 
-    const res = await wallet.osmosisSignTx({
+    const res = await wallet.merlinsSignTx({
       addressNList: core.bip32ToAddressNList(`m/44'/118'/0'/0/0`),
       chain_id: unsigned.chain_id,
       account_number: unsigned.account_number,
       sequence: unsigned.sequence,
       tx: unsigned,
     });
-    $osmosisResults.val(JSON.stringify(res));
+    $merlinsResults.val(JSON.stringify(res));
   } else {
     const label = await wallet.getLabel();
-    $osmosisResults.val(label + " does not support Osmosis");
+    $merlinsResults.val(label + " does not support Merlins");
   }
 });
 
@@ -2590,7 +2590,8 @@ function erc20SetSetSelected(selectedButton: any) {
     },
     {
       button: $erc20TotalSupply,
-      content: "\
+      content:
+        "\
       <input type='text' placeholder='Contract Address' id='erc20ContractAddress' />\
       ",
     },

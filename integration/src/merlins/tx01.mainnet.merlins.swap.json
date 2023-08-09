@@ -1,6 +1,6 @@
 {
   "account_number": "95421",
-  "chain_id": "osmosis-1",
+  "chain_id": "merlins-1",
   "fee": {
     "gas": "290000",
     "amount": [
@@ -13,7 +13,7 @@
   "memo": "",
   "msgs": [
     {
-      "type": "osmosis/gamm/swap-exact-amount-in",
+      "type": "merlins/gamm/swap-exact-amount-in",
       "value": {
         "routes": [
           {

@@ -1,13 +1,13 @@
 import { addressNListToBIP32, slip44ByCoin } from "./utils";
 import { BIP32Path, HDWallet, HDWalletInfo, PathDescription } from "./wallet";
 
-export interface OsmosisGetAddress {
+export interface MerlinsGetAddress {
   addressNList: BIP32Path;
   showDisplay?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace Osmosis {
+export namespace Merlins {
   export interface Msg {
     type: string;
     value: any;
@@ -46,60 +46,60 @@ export namespace Osmosis {
   }
 }
 
-export interface OsmosisTx {
-  msg: Osmosis.Msg[];
-  fee: Osmosis.StdFee;
-  signatures: Osmosis.StdSignature[];
+export interface MerlinsTx {
+  msg: Merlins.Msg[];
+  fee: Merlins.StdFee;
+  signatures: Merlins.StdSignature[];
   memo?: string;
 }
 
-export interface OsmosisSignTx {
+export interface MerlinsSignTx {
   addressNList: BIP32Path;
-  tx: Osmosis.StdTx;
+  tx: Merlins.StdTx;
   chain_id: string;
   account_number: string;
   sequence: string;
   fee?: number;
 }
 
-export interface OsmosisSignedTx {
+export interface MerlinsSignedTx {
   serialized: string;
   body: string;
   authInfoBytes: string;
   signatures: string[];
 }
 
-export interface OsmosisGetAccountPaths {
+export interface MerlinsGetAccountPaths {
   accountIdx: number;
 }
 
-export interface OsmosisAccountPath {
+export interface MerlinsAccountPath {
   addressNList: BIP32Path;
 }
 
-export interface OsmosisWalletInfo extends HDWalletInfo {
-  readonly _supportsOsmosisInfo: boolean;
+export interface MerlinsWalletInfo extends HDWalletInfo {
+  readonly _supportsMerlinsInfo: boolean;
 
   /**
    * Returns a list of bip32 paths for a given account index in preferred order
    * from most to least preferred.
    */
-  osmosisGetAccountPaths(msg: OsmosisGetAccountPaths): Array<OsmosisAccountPath>;
+  merlinsGetAccountPaths(msg: MerlinsGetAccountPaths): Array<MerlinsAccountPath>;
 
   /**
    * Returns the "next" account path, if any.
    */
-  osmosisNextAccountPath(msg: OsmosisAccountPath): OsmosisAccountPath | undefined;
+  merlinsNextAccountPath(msg: MerlinsAccountPath): MerlinsAccountPath | undefined;
 }
 
-export interface OsmosisWallet extends OsmosisWalletInfo, HDWallet {
-  readonly _supportsOsmosis: boolean;
+export interface MerlinsWallet extends MerlinsWalletInfo, HDWallet {
+  readonly _supportsMerlins: boolean;
 
-  osmosisGetAddress(msg: OsmosisGetAddress): Promise<string | null>;
-  osmosisSignTx(msg: OsmosisSignTx): Promise<OsmosisSignedTx | null>;
+  merlinsGetAddress(msg: MerlinsGetAddress): Promise<string | null>;
+  merlinsSignTx(msg: MerlinsSignTx): Promise<MerlinsSignedTx | null>;
 }
 
-export function osmosisDescribePath(path: BIP32Path): PathDescription {
+export function merlinsDescribePath(path: BIP32Path): PathDescription {
   const pathStr = addressNListToBIP32(path);
   const unknown: PathDescription = {
     verbose: pathStr,
@@ -129,7 +129,7 @@ export function osmosisDescribePath(path: BIP32Path): PathDescription {
 
   const index = path[2] & 0x7fffffff;
   return {
-    verbose: `Osmosis Account #${index}`,
+    verbose: `Merlins Account #${index}`,
     accountIdx: index,
     wholeAccount: true,
     coin: "Osmo",

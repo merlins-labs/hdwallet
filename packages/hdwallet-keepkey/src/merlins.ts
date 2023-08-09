@@ -2,7 +2,7 @@ import type { AminoSignResponse, OfflineAminoSigner, StdSignDoc, StdTx } from "@
 import type { AccountData } from "@cosmjs/proto-signing";
 import type { SignerData } from "@cosmjs/stargate";
 import * as Messages from "@keepkey/device-protocol/lib/messages_pb";
-import * as OsmosisMessages from "@keepkey/device-protocol/lib/messages-osmosis_pb";
+import * as MerlinsMessages from "@keepkey/device-protocol/lib/messages-merlins_pb";
 import * as core from "@shapeshiftoss/hdwallet-core";
 import { sortTxFields } from "@shapeshiftoss/hdwallet-core";
 import * as bs58check from "bs58check";
@@ -12,7 +12,7 @@ import { Transport } from "./transport";
 
 const protoTxBuilder = PLazy.from(() => import("@shapeshiftoss/proto-tx-builder"));
 
-export function osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<core.OsmosisAccountPath> {
+export function merlinsGetAccountPaths(msg: core.MerlinsGetAccountPaths): Array<core.MerlinsAccountPath> {
   return [
     {
       addressNList: [0x80000000 + 44, 0x80000000 + core.slip44ByCoin("Osmo"), 0x80000000 + msg.accountIdx, 0, 0],
@@ -20,23 +20,23 @@ export function osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<
   ];
 }
 
-export async function osmosisGetAddress(
+export async function merlinsGetAddress(
   transport: Transport,
-  msg: OsmosisMessages.OsmosisGetAddress.AsObject
+  msg: MerlinsMessages.MerlinsGetAddress.AsObject
 ): Promise<string> {
-  const getAddr = new OsmosisMessages.OsmosisGetAddress();
+  const getAddr = new MerlinsMessages.MerlinsGetAddress();
   getAddr.setAddressNList(msg.addressNList);
   getAddr.setShowDisplay(msg.showDisplay !== false);
-  const response = await transport.call(Messages.MessageType.MESSAGETYPE_OSMOSISGETADDRESS, getAddr, {
+  const response = await transport.call(Messages.MessageType.MESSAGETYPE_MERLINSGETADDRESS, getAddr, {
     msgTimeout: core.LONG_TIMEOUT,
   });
 
-  const osmosisAddress = response.proto as OsmosisMessages.OsmosisAddress;
-  return core.mustBeDefined(osmosisAddress.getAddress());
+  const merlinsAddress = response.proto as MerlinsMessages.MerlinsAddress;
+  return core.mustBeDefined(merlinsAddress.getAddress());
 }
 
-export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignTx): Promise<any> {
-  const address = await osmosisGetAddress(transport, { addressNList: msg.addressNList, showDisplay: false });
+export async function merlinsSignTx(transport: Transport, msg: core.MerlinsSignTx): Promise<any> {
+  const address = await merlinsGetAddress(transport, { addressNList: msg.addressNList, showDisplay: false });
   const getPublicKeyMsg = new Messages.GetPublicKey();
   getPublicKeyMsg.setAddressNList(msg.addressNList);
   getPublicKeyMsg.setEcdsaCurveName("secp256k1");
@@ -49,7 +49,7 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
   const pubkey = bs58check.decode(core.mustBeDefined(pubkeyMsg.getXpub())).slice(45);
 
   return transport.lockDuring(async () => {
-    const signTx = new OsmosisMessages.OsmosisSignTx();
+    const signTx = new MerlinsMessages.MerlinsSignTx();
     signTx.setAddressNList(msg.addressNList);
     signTx.setAccountNumber(msg.account_number);
     signTx.setChainId(msg.chain_id);
@@ -61,14 +61,14 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
     }
     signTx.setMsgCount(1);
 
-    let resp = await transport.call(Messages.MessageType.MESSAGETYPE_OSMOSISSIGNTX, signTx, {
+    let resp = await transport.call(Messages.MessageType.MESSAGETYPE_MERLINSSIGNTX, signTx, {
       msgTimeout: core.LONG_TIMEOUT,
       omitLock: true,
     });
 
     for (const m of msg.tx.msg) {
-      if (resp.message_enum !== Messages.MessageType.MESSAGETYPE_OSMOSISMSGREQUEST) {
-        throw new Error(`osmosis: unexpected response ${resp.message_type}`);
+      if (resp.message_enum !== Messages.MessageType.MESSAGETYPE_MERLINSMSGREQUEST) {
+        throw new Error(`merlins: unexpected response ${resp.message_type}`);
       }
 
       let ack;
@@ -76,21 +76,21 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
         case "cosmos-sdk/MsgSend": {
           // Transfer
           if (m.value.amount.length !== 1) {
-            throw new Error("osmosis: Multiple amounts per msg not supported");
+            throw new Error("merlins: Multiple amounts per msg not supported");
           }
 
           const denom = m.value.amount[0].denom;
           if (denom !== "uosmo") {
-            throw new Error("osmosis: Unsupported denomination: " + denom);
+            throw new Error("merlins: Unsupported denomination: " + denom);
           }
 
-          const send = new OsmosisMessages.OsmosisMsgSend();
+          const send = new MerlinsMessages.MerlinsMsgSend();
           send.setFromAddress(m.value.from_address);
           send.setToAddress(m.value.to_address);
           send.setDenom(m.value.amount[0].denom);
           send.setAmount(m.value.amount[0].amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setSend(send);
           break;
         }
@@ -98,16 +98,16 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           // Delegate
           const denom = m.value.amount.denom;
           if (denom !== "uosmo") {
-            throw new Error("osmosis: Unsupported denomination: " + denom);
+            throw new Error("merlins: Unsupported denomination: " + denom);
           }
 
-          const delegate = new OsmosisMessages.OsmosisMsgDelegate();
+          const delegate = new MerlinsMessages.MerlinsMsgDelegate();
           delegate.setDelegatorAddress(m.value.delegator_address);
           delegate.setValidatorAddress(m.value.validator_address);
           delegate.setDenom(m.value.amount.denom);
           delegate.setAmount(m.value.amount.amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setDelegate(delegate);
           break;
         }
@@ -115,16 +115,16 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           // Undelegate
           const denom = m.value.amount.denom;
           if (denom !== "uosmo") {
-            throw new Error("osmosis: Unsupported denomination: " + denom);
+            throw new Error("merlins: Unsupported denomination: " + denom);
           }
 
-          const undelegate = new OsmosisMessages.OsmosisMsgUndelegate();
+          const undelegate = new MerlinsMessages.MerlinsMsgUndelegate();
           undelegate.setDelegatorAddress(m.value.delegator_address);
           undelegate.setValidatorAddress(m.value.validator_address);
           undelegate.setDenom(m.value.amount.denom);
           undelegate.setAmount(m.value.amount.amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setUndelegate(undelegate);
           break;
         }
@@ -132,33 +132,33 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           // Redelegate
           const denom = m.value.amount.denom;
           if (denom !== "uosmo") {
-            throw new Error("osmosis: Unsupported denomination: " + denom);
+            throw new Error("merlins: Unsupported denomination: " + denom);
           }
 
-          const redelegate = new OsmosisMessages.OsmosisMsgRedelegate();
+          const redelegate = new MerlinsMessages.MerlinsMsgRedelegate();
           redelegate.setDelegatorAddress(m.value.delegator_address);
           redelegate.setValidatorSrcAddress(m.value.validator_src_address);
           redelegate.setValidatorDstAddress(m.value.validator_dst_address);
           redelegate.setAmount(m.value.amount.amount);
           redelegate.setDenom(m.value.amount.denom);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setRedelegate(redelegate);
           break;
         }
         case "cosmos-sdk/MsgWithdrawDelegationReward": {
           // Rewards
-          const rewards = new OsmosisMessages.OsmosisMsgRewards();
+          const rewards = new MerlinsMessages.MerlinsMsgRewards();
           rewards.setDelegatorAddress(m.value.delegator_address);
           rewards.setValidatorAddress(m.value.validator_address);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setRewards(rewards);
           break;
         }
-        case "osmosis/gamm/join-pool": {
+        case "merlins/gamm/join-pool": {
           // LP add
-          const lpAdd = new OsmosisMessages.OsmosisMsgLPAdd();
+          const lpAdd = new MerlinsMessages.MerlinsMsgLPAdd();
           lpAdd.setSender(m.value.sender);
           lpAdd.setPoolId(m.value.pool_id);
           lpAdd.setShareOutAmount(m.value.share_out_amount);
@@ -167,13 +167,13 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           lpAdd.setDenomInMaxB(m.value.token_in_maxs[1].denom);
           lpAdd.setAmountInMaxB(m.value.token_in_maxs[1].amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setLpAdd(lpAdd);
           break;
         }
-        case "osmosis/gamm/exit-pool": {
+        case "merlins/gamm/exit-pool": {
           // LP remove
-          const lpRemove = new OsmosisMessages.OsmosisMsgLPRemove();
+          const lpRemove = new MerlinsMessages.MerlinsMsgLPRemove();
           lpRemove.setSender(m.value.sender);
           lpRemove.setPoolId(m.value.pool_id);
           lpRemove.setShareInAmount(m.value.share_in_amount);
@@ -182,13 +182,13 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           lpRemove.setDenomOutMinB(m.value.token_out_mins[1].denom);
           lpRemove.setAmountOutMinB(m.value.token_out_mins[1].amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setLpRemove(lpRemove);
           break;
         }
         case "cosmos-sdk/MsgTransfer": {
           // IBC Transfer
-          const ibcTransfer = new OsmosisMessages.OsmosisMsgIBCTransfer();
+          const ibcTransfer = new MerlinsMessages.MerlinsMsgIBCTransfer();
           ibcTransfer.setReceiver(m.value.receiver);
           ibcTransfer.setSender(m.value.sender);
           ibcTransfer.setSourceChannel(m.value.source_channel);
@@ -198,13 +198,13 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           ibcTransfer.setAmount(m.value.token.amount);
           ibcTransfer.setDenom(m.value.token.denom);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setIbcTransfer(ibcTransfer);
           break;
         }
-        case "osmosis/gamm/swap-exact-amount-in": {
+        case "merlins/gamm/swap-exact-amount-in": {
           // Swap
-          const swap = new OsmosisMessages.OsmosisMsgSwap();
+          const swap = new MerlinsMessages.MerlinsMsgSwap();
           swap.setSender(m.value.sender);
           swap.setPoolId(m.value.routes[0].pool_id);
           swap.setTokenOutDenom(m.value.routes[0].token_out_denom);
@@ -212,25 +212,25 @@ export async function osmosisSignTx(transport: Transport, msg: core.OsmosisSignT
           swap.setTokenInAmount(m.value.token_in.amount);
           swap.setTokenOutMinAmount(m.value.token_out_min_amount);
 
-          ack = new OsmosisMessages.OsmosisMsgAck();
+          ack = new MerlinsMessages.MerlinsMsgAck();
           ack.setSwap(swap);
           break;
         }
         default:
-          throw new Error(`osmosis: Message ${m.type} is not yet supported`);
+          throw new Error(`merlins: Message ${m.type} is not yet supported`);
       }
 
-      resp = await transport.call(Messages.MessageType.MESSAGETYPE_OSMOSISMSGACK, ack, {
+      resp = await transport.call(Messages.MessageType.MESSAGETYPE_MERLINSMSGACK, ack, {
         msgTimeout: core.LONG_TIMEOUT,
         omitLock: true,
       });
     }
 
-    if (resp.message_enum !== Messages.MessageType.MESSAGETYPE_OSMOSISSIGNEDTX) {
-      throw new Error(`osmosis: unexpected response ${resp.message_type}`);
+    if (resp.message_enum !== Messages.MessageType.MESSAGETYPE_MERLINSSIGNEDTX) {
+      throw new Error(`merlins: unexpected response ${resp.message_type}`);
     }
 
-    const signedTx = resp.proto as OsmosisMessages.OsmosisSignedTx;
+    const signedTx = resp.proto as MerlinsMessages.MerlinsSignedTx;
 
     const offlineSigner: OfflineAminoSigner = {
       async getAccounts(): Promise<readonly AccountData[]> {

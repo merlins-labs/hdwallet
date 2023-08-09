@@ -16,7 +16,7 @@ import { eosTests } from "./eos";
 import { ethTests } from "./ethereum";
 import { fioTests } from "./fio";
 import { kavaTests } from "./kava";
-import { osmosisTests } from "./osmosis";
+import { merlinsTests } from "./merlins";
 import { rippleTests } from "./ripple";
 import { secretTests } from "./secret";
 import { terraTests } from "./terra";
@@ -105,11 +105,11 @@ export function integration(suite: WalletSuite): void {
       cosmosTests(() => ({ wallet, info }));
     });
 
-    describe("OsmosisWallet", () => {
+    describe("MerlinsWallet", () => {
       beforeAll(async () => {
         wallet = await suite.createWallet("Osmo");
       });
-      osmosisTests(() => ({ wallet, info }));
+      merlinsTests(() => ({ wallet, info }));
     });
 
     describe("BinanceWallet", () => {

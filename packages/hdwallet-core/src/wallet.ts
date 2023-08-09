@@ -9,7 +9,7 @@ import { EosWallet, EosWalletInfo } from "./eos";
 import { ETHWallet, ETHWalletInfo } from "./ethereum";
 import { FioWallet, FioWalletInfo } from "./fio";
 import { KavaWallet, KavaWalletInfo } from "./kava";
-import { OsmosisWallet, OsmosisWalletInfo } from "./osmosis";
+import { MerlinsWallet, MerlinsWalletInfo } from "./merlins";
 import { RippleWallet, RippleWalletInfo } from "./ripple";
 import { SecretWallet, SecretWalletInfo } from "./secret";
 import { TerraWallet, TerraWalletInfo } from "./terra";
@@ -156,12 +156,12 @@ export function infoCosmos(info: HDWalletInfo): info is CosmosWalletInfo {
   return isObject(info) && (info as any)._supportsCosmosInfo;
 }
 
-export function supportsOsmosis(wallet: HDWallet): wallet is OsmosisWallet {
-  return isObject(wallet) && (wallet as any)._supportsOsmosis;
+export function supportsMerlins(wallet: HDWallet): wallet is MerlinsWallet {
+  return isObject(wallet) && (wallet as any)._supportsMerlins;
 }
 
-export function infoOsmosis(info: HDWalletInfo): info is OsmosisWalletInfo {
-  return isObject(info) && (info as any)._supportsOsmosisInfo;
+export function infoMerlins(info: HDWalletInfo): info is MerlinsWalletInfo {
+  return isObject(info) && (info as any)._supportsMerlinsInfo;
 }
 
 export function supportsArkeo(wallet: HDWallet): wallet is ArkeoWallet {

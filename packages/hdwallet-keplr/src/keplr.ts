@@ -4,7 +4,7 @@ import * as core from "@shapeshiftoss/hdwallet-core";
 import isObject from "lodash/isObject";
 
 import * as cosmos from "./cosmos";
-import * as osmosis from "./osmosis";
+import * as merlins from "./merlins";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -26,9 +26,9 @@ export function isKeplr(wallet: core.HDWallet): wallet is KeplrHDWallet {
   return isObject(wallet) && (wallet as any)._isKeplr;
 }
 
-export class KeplrHDWalletInfo implements core.HDWalletInfo, core.CosmosWalletInfo, core.OsmosisWalletInfo {
+export class KeplrHDWalletInfo implements core.HDWalletInfo, core.CosmosWalletInfo, core.MerlinsWalletInfo {
   readonly _supportsCosmosInfo = true;
-  readonly _supportsOsmosisInfo = true;
+  readonly _supportsMerlinsInfo = true;
 
   public getVendor(): string {
     return "Keplr";
@@ -72,7 +72,7 @@ export class KeplrHDWalletInfo implements core.HDWalletInfo, core.CosmosWalletIn
       case "Atom":
         return cosmos.cosmosDescribePath(msg.path);
       case "Osmo":
-        return osmosis.osmosisDescribePath(msg.path);
+        return merlins.merlinsDescribePath(msg.path);
       default:
         throw new Error("Unsupported path");
     }
@@ -100,41 +100,41 @@ export class KeplrHDWalletInfo implements core.HDWalletInfo, core.CosmosWalletIn
     return undefined;
   }
 
-  public async osmosisSupportsNetwork(chainId = 1): Promise<boolean> {
+  public async merlinsSupportsNetwork(chainId = 1): Promise<boolean> {
     return chainId === 1;
   }
 
-  public async osmosisSupportsSecureTransfer(): Promise<boolean> {
+  public async merlinsSupportsSecureTransfer(): Promise<boolean> {
     return false;
   }
 
-  public osmosisSupportsNativeShapeShift(): boolean {
+  public merlinsSupportsNativeShapeShift(): boolean {
     return false;
   }
 
-  public osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<core.OsmosisAccountPath> {
-    return osmosis.osmosisGetAccountPaths(msg);
+  public merlinsGetAccountPaths(msg: core.MerlinsGetAccountPaths): Array<core.MerlinsAccountPath> {
+    return merlins.merlinsGetAccountPaths(msg);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public osmosisNextAccountPath(msg: core.OsmosisAccountPath): core.OsmosisAccountPath | undefined {
+  public merlinsNextAccountPath(msg: core.MerlinsAccountPath): core.MerlinsAccountPath | undefined {
     return undefined;
   }
 }
 
-export class KeplrHDWallet implements core.HDWallet, core.CosmosWallet, core.OsmosisWallet {
+export class KeplrHDWallet implements core.HDWallet, core.CosmosWallet, core.MerlinsWallet {
   readonly _isKeplr = true;
   readonly _supportsCosmos = true;
   readonly _supportsCosmosInfo = true;
-  readonly _supportsOsmosis = true;
-  readonly _supportsOsmosisInfo = true;
+  readonly _supportsMerlins = true;
+  readonly _supportsMerlinsInfo = true;
 
   transport: core.Transport = new KeplrTransport(new core.Keyring());
   info: KeplrHDWalletInfo & core.HDWalletInfo;
 
   initialized = false;
   provider: any = {};
-  supportedNetworks: ChainReference[] = [ChainReference.CosmosHubMainnet, ChainReference.OsmosisMainnet];
+  supportedNetworks: ChainReference[] = [ChainReference.CosmosHubMainnet, ChainReference.MerlinsMainnet];
 
   constructor() {
     this.info = new KeplrHDWalletInfo();
@@ -335,37 +335,37 @@ export class KeplrHDWallet implements core.HDWallet, core.CosmosWallet, core.Osm
     return null;
   }
 
-  public async osmosisSupportsNetwork(chainId = 118): Promise<boolean> {
+  public async merlinsSupportsNetwork(chainId = 118): Promise<boolean> {
     return chainId === 118;
   }
 
-  public async osmosisSupportsSecureTransfer(): Promise<boolean> {
+  public async merlinsSupportsSecureTransfer(): Promise<boolean> {
     return false;
   }
 
-  public osmosisSupportsNativeShapeShift(): boolean {
+  public merlinsSupportsNativeShapeShift(): boolean {
     return false;
   }
 
-  public osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<core.OsmosisAccountPath> {
-    return osmosis.osmosisGetAccountPaths(msg);
+  public merlinsGetAccountPaths(msg: core.MerlinsGetAccountPaths): Array<core.MerlinsAccountPath> {
+    return merlins.merlinsGetAccountPaths(msg);
   }
 
-  public osmosisNextAccountPath(msg: core.OsmosisAccountPath): core.OsmosisAccountPath | undefined {
-    return this.info.osmosisNextAccountPath(msg);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async osmosisGetAddress(): Promise<string | null> {
-    return (await osmosis.osmosisGetAddress(this.provider)) || null;
-  }
-
-  public async osmosisSignTx(msg: core.OsmosisSignTx): Promise<core.OsmosisSignedTx | null> {
-    return osmosis.osmosisSignTx(this.provider, msg);
+  public merlinsNextAccountPath(msg: core.MerlinsAccountPath): core.MerlinsAccountPath | undefined {
+    return this.info.merlinsNextAccountPath(msg);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async osmosisSendTx(msg: core.OsmosisSignTx): Promise<string | null> {
+  public async merlinsGetAddress(): Promise<string | null> {
+    return (await merlins.merlinsGetAddress(this.provider)) || null;
+  }
+
+  public async merlinsSignTx(msg: core.MerlinsSignTx): Promise<core.MerlinsSignedTx | null> {
+    return merlins.merlinsSignTx(this.provider, msg);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async merlinsSendTx(msg: core.MerlinsSignTx): Promise<string | null> {
     /** Broadcast from Keplr is currently unimplemented */
     return null;
   }

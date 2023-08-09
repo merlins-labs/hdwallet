@@ -9,7 +9,7 @@ import * as Btc from "./bitcoin";
 import * as Cosmos from "./cosmos";
 import * as Eos from "./eos";
 import * as Eth from "./ethereum";
-import * as Osmosis from "./osmosis";
+import * as Merlins from "./merlins";
 import * as Ripple from "./ripple";
 import * as Thorchain from "./thorchain";
 import { Transport } from "./transport";
@@ -206,7 +206,7 @@ function describeCosmosPath(path: core.BIP32Path): core.PathDescription {
   };
 }
 
-function describeOsmosisPath(path: core.BIP32Path): core.PathDescription {
+function describeMerlinsPath(path: core.BIP32Path): core.PathDescription {
   const pathStr = core.addressNListToBIP32(path);
   const unknown: core.PathDescription = {
     verbose: pathStr,
@@ -236,7 +236,7 @@ function describeOsmosisPath(path: core.BIP32Path): core.PathDescription {
 
   const index = path[2] & 0x7fffffff;
   return {
-    verbose: `Osmosis Account #${index}`,
+    verbose: `Merlins Account #${index}`,
     accountIdx: index,
     wholeAccount: true,
     coin: "Osmo",
@@ -415,7 +415,7 @@ export class KeepKeyHDWalletInfo
   readonly _supportsBTCInfo = true;
   readonly _supportsETHInfo = true;
   readonly _supportsCosmosInfo = true;
-  readonly _supportsOsmosisInfo = true;
+  readonly _supportsMerlinsInfo = true;
   readonly _supportsRippleInfo = true;
   readonly _supportsBinanceInfo = true;
   readonly _supportsEosInfo = true;
@@ -473,8 +473,8 @@ export class KeepKeyHDWalletInfo
     return Cosmos.cosmosGetAccountPaths(msg);
   }
 
-  public osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<core.OsmosisAccountPath> {
-    return Osmosis.osmosisGetAccountPaths(msg);
+  public merlinsGetAccountPaths(msg: core.MerlinsGetAccountPaths): Array<core.MerlinsAccountPath> {
+    return Merlins.merlinsGetAccountPaths(msg);
   }
 
   public thorchainGetAccountPaths(msg: core.ThorchainGetAccountPaths): Array<core.ThorchainAccountPath> {
@@ -533,7 +533,7 @@ export class KeepKeyHDWalletInfo
       case "Atom":
         return describeCosmosPath(msg.path);
       case "Osmo":
-        return describeOsmosisPath(msg.path);
+        return describeMerlinsPath(msg.path);
       case "Binance":
         return describeBinancePath(msg.path);
       case "Ripple":
@@ -603,8 +603,8 @@ export class KeepKeyHDWalletInfo
     };
   }
 
-  public osmosisNextAccountPath(msg: core.OsmosisAccountPath): core.OsmosisAccountPath | undefined {
-    const description = describeOsmosisPath(msg.addressNList);
+  public merlinsNextAccountPath(msg: core.MerlinsAccountPath): core.MerlinsAccountPath | undefined {
+    const description = describeMerlinsPath(msg.addressNList);
     if (!description.isKnown) {
       return undefined;
     }
@@ -682,7 +682,7 @@ export class KeepKeyHDWallet implements core.HDWallet, core.BTCWallet, core.ETHW
   readonly _supportsETHInfo = true;
   readonly _supportsBTCInfo = true;
   readonly _supportsCosmosInfo = true;
-  readonly _supportsOsmosisInfo = true;
+  readonly _supportsMerlinsInfo = true;
   readonly _supportsRippleInfo = true;
   readonly _supportsBinanceInfo = true;
   readonly _supportsEosInfo = true;
@@ -698,7 +698,7 @@ export class KeepKeyHDWallet implements core.HDWallet, core.BTCWallet, core.ETHW
   readonly _supportsGnosis = true;
   readonly _supportsBTC = true;
   _supportsCosmos = true;
-  _supportsOsmosis = true;
+  _supportsMerlins = true;
   _supportsRipple = true;
   _supportsBinance = true;
   _supportsEos = true;
@@ -1064,7 +1064,7 @@ export class KeepKeyHDWallet implements core.HDWallet, core.BTCWallet, core.ETHW
 
     const fwVersion = `v${out.majorVersion}.${out.minorVersion}.${out.patchVersion}`;
     //Lost Support per proto 44.3
-    this._supportsOsmosis = semver.gte(fwVersion, "v7.7.0");
+    this._supportsMerlins = semver.gte(fwVersion, "v7.7.0");
     this._supportsCosmos = semver.gte(fwVersion, "v7.3.0");
     this._supportsRipple = semver.gte(fwVersion, "v6.4.0");
     this._supportsBinance = semver.gte(fwVersion, "v6.4.0");
@@ -1287,16 +1287,16 @@ export class KeepKeyHDWallet implements core.HDWallet, core.BTCWallet, core.ETHW
     return Cosmos.cosmosSignTx(this.transport, msg);
   }
 
-  public osmosisGetAccountPaths(msg: core.OsmosisGetAccountPaths): Array<core.OsmosisAccountPath> {
-    return this.info.osmosisGetAccountPaths(msg);
+  public merlinsGetAccountPaths(msg: core.MerlinsGetAccountPaths): Array<core.MerlinsAccountPath> {
+    return this.info.merlinsGetAccountPaths(msg);
   }
 
-  public osmosisGetAddress(msg: core.OsmosisGetAddress): Promise<string> {
-    return Osmosis.osmosisGetAddress(this.transport, msg);
+  public merlinsGetAddress(msg: core.MerlinsGetAddress): Promise<string> {
+    return Merlins.merlinsGetAddress(this.transport, msg);
   }
 
-  public osmosisSignTx(msg: core.OsmosisSignTx): Promise<core.OsmosisSignedTx> {
-    return Osmosis.osmosisSignTx(this.transport, msg);
+  public merlinsSignTx(msg: core.MerlinsSignTx): Promise<core.MerlinsSignedTx> {
+    return Merlins.merlinsSignTx(this.transport, msg);
   }
 
   public thorchainGetAccountPaths(msg: core.ThorchainGetAccountPaths): Array<core.ThorchainAccountPath> {
@@ -1359,8 +1359,8 @@ export class KeepKeyHDWallet implements core.HDWallet, core.BTCWallet, core.ETHW
     return this.info.cosmosNextAccountPath(msg);
   }
 
-  public osmosisNextAccountPath(msg: core.OsmosisAccountPath): core.OsmosisAccountPath | undefined {
-    return this.info.osmosisNextAccountPath(msg);
+  public merlinsNextAccountPath(msg: core.MerlinsAccountPath): core.MerlinsAccountPath | undefined {
+    return this.info.merlinsNextAccountPath(msg);
   }
 
   public rippleNextAccountPath(msg: core.RippleAccountPath): core.RippleAccountPath | undefined {

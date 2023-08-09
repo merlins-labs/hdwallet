@@ -170,7 +170,7 @@ for (const coin of [
   "kava",
   "cardano",
   "cosmos",
-  "osmosis",
+  "merlins",
   "binance",
   "ethereum",
   "arkeo",

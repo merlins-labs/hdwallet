@@ -1,6 +1,6 @@
 {
   "account_number": "95421",
-  "chain_id": "osmosis-1",
+  "chain_id": "merlins-1",
   "fee": {
     "amount": [
       {
@@ -13,7 +13,7 @@
   "memo": "",
   "msgs": [
     {
-      "type": "osmosis/gamm/join-pool",
+      "type": "merlins/gamm/join-pool",
       "value": {
         "pool_id": "1",
         "sender": "osmo15cenya0tr7nm3tz2wn3h3zwkht2rxrq7g9ypmq",

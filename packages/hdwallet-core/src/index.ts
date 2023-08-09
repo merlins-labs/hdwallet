@@ -2,7 +2,7 @@ export * from "./arkeo";
 export * from "./binance";
 export * from "./bitcoin";
 export * from "./cosmos";
-export * from "./osmosis";
+export * from "./merlins";
 export * from "./debuglink";
 export * from "./eos";
 export * from "./ethereum";

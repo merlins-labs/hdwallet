@@ -1,7 +1,7 @@
 {
-  "osmosisSendTx": {
+  "merlinsSendTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -29,9 +29,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisDelegateTx": {
+  "merlinsDelegateTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -57,9 +57,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisUndelegateTx": {
+  "merlinsUndelegateTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -85,9 +85,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisRedelegateTx": {
+  "merlinsRedelegateTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -114,9 +114,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisRewardsTx": {
+  "merlinsRewardsTx": {
   "account_number": "97721",
-  "chain_id": "osmosis-1",
+  "chain_id": "merlins-1",
   "fee": {
     "amount": [
       {
@@ -138,9 +138,9 @@
   ],
   "sequence": "90"
 },
-  "osmosisLPAddTx": {
+  "merlinsLPAddTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -153,7 +153,7 @@
     "memo": "memo",
     "msg": [
       {
-        "type": "osmosis/gamm/join-pool",
+        "type": "merlins/gamm/join-pool",
         "value": {
           "pool_id": "1",
           "sender": "osmo1zjk9dkhzz2waxmtvtl3hnnl0t3ac0k5utyhxgz",
@@ -173,9 +173,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisLPRemoveTx": {
+  "merlinsLPRemoveTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -188,7 +188,7 @@
     "memo": "memo",
     "msg": [
       {
-        "type": "osmosis/gamm/exit-pool",
+        "type": "merlins/gamm/exit-pool",
         "value": {
           "pool_id": "1",
           "sender": "osmo1zjk9dkhzz2waxmtvtl3hnnl0t3ac0k5utyhxgz",
@@ -209,9 +209,9 @@
     "sequence": "90"
   },
 
-  "osmosisIBCTransferTx": {
+  "merlinsIBCTransferTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -243,9 +243,9 @@
     ],
     "sequence": "90"
   },
-  "osmosisSwapTx": {
+  "merlinsSwapTx": {
     "account_number": "97721",
-    "chain_id": "osmosis-1",
+    "chain_id": "merlins-1",
     "fee": {
       "amount": [
         {
@@ -258,7 +258,7 @@
     "memo": "memo",
     "msg": [
       {
-        "type": "osmosis/gamm/swap-exact-amount-in",
+        "type": "merlins/gamm/swap-exact-amount-in",
         "value": {
           "routes": [
             {
